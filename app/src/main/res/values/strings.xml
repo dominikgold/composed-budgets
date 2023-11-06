@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">ComposedBudgets</string>
+    <string name="budget_interval_annual">Annual</string>
+    <string name="budget_interval_daily">Daily</string>
+    <string name="budget_interval_monthly">Monthly</string>
+    <string name="add_expense_sheet_title">Add expense to %s</string>
+    <string name="add_expense_sheet_done_button">Done</string>
+    <string name="budgets_overview_title">Your budgets</string>
+    <string name="add_expense_amount_input_hint">Amount</string>
+    <string name="add_expense_name_input_hint">Name (optional)</string>
+    <string name="add_budget_title">Add budget</string>
+    <string name="edit_budget_title">Edit budget</string>
+    <string name="edit_budget_save_button">Save</string>
+    <string name="budget_interval_one_time">One-time</string>
+    <string name="edit_budget_name_hint">Name</string>
+    <string name="edit_budget_limit_hint">Limit</string>
+    <string name="change_budget_interval_sheet_title">Update budget interval</string>
+    <string name="edit_budget_excess_carryover_percentage_title">Excess carryover</string>
+    <string name="edit_budget_overdraft_carryover_percentage_title">Overdraft carryover</string>
+    <string name="percentage_value_format_string">%d\\%</string>
+</resources>

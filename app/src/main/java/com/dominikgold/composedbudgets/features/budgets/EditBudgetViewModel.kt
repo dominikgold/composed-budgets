@@ -1,0 +1,111 @@
+package com.dominikgold.composedbudgets.features.budgets
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.dominikgold.composedbudgets.common.Percentage
+import com.dominikgold.composedbudgets.common.parseUserInputToDouble
+import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+
+private const val LIMIT_INPUT_KEY = "limit_input_key"
+private const val NAME_INPUT_KEY = "name_input_key"
+private const val EXCESS_CARRY_OVER_INPUT_KEY = "excess_input_key"
+private const val OVERDRAFT_CARRY_OVER_INPUT_KEY = "overdraft_input_key"
+private const val INTERVAL_INPUT_KEY = "interval_input_key"
+
+class EditBudgetViewModel(
+    private val addBudget: AddBudget,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel(), EditBudgetActions {
+
+    // TODO set to true when budget id is passed in via saved state handle
+    val isEditMode = false
+
+    private val currentLimitInput: StateFlow<String> = savedStateHandle.getStateFlow(LIMIT_INPUT_KEY, "")
+    private val currentNameInput: StateFlow<String> = savedStateHandle.getStateFlow(NAME_INPUT_KEY, "")
+    private val currentExcessCarryOver: StateFlow<Percentage> = savedStateHandle.getStateFlow(EXCESS_CARRY_OVER_INPUT_KEY, Percentage(1f))
+    private val currentOverdraftCarryOver: StateFlow<Percentage> =
+        savedStateHandle.getStateFlow(OVERDRAFT_CARRY_OVER_INPUT_KEY, Percentage(1f))
+    private val currentInterval: StateFlow<BudgetInterval> = savedStateHandle.getStateFlow(INTERVAL_INPUT_KEY, BudgetInterval.Monthly)
+
+    val changeIntervalSheet = MutableStateFlow<ChangeBudgetIntervalBottomSheetData?>(null)
+
+    val uiState = combine(
+        currentLimitInput,
+        currentNameInput,
+        currentExcessCarryOver,
+        currentOverdraftCarryOver,
+        currentInterval,
+    ) { currentLimitInput, currentNameInput, currentExcessCarryOver, currentOverdraftCarryOver, currentInterval ->
+        EditBudgetUiState(currentLimitInput, currentNameInput, currentExcessCarryOver, currentOverdraftCarryOver, currentInterval)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        EditBudgetUiState("", "", Percentage(1f), Percentage(1f), BudgetInterval.Monthly)
+    )
+
+    override fun onNameInputChanged(input: String) {
+        savedStateHandle[NAME_INPUT_KEY] = input
+    }
+
+    override fun onLimitInputChanged(input: String) {
+        if (input.parseUserInputToDouble() != null) {
+            savedStateHandle[LIMIT_INPUT_KEY] = input
+        }
+    }
+
+    override fun onIntervalChanged(interval: BudgetInterval) {
+        savedStateHandle[INTERVAL_INPUT_KEY] = interval
+        changeIntervalSheet.value = null
+    }
+
+    override fun onChangeIntervalClicked() {
+        changeIntervalSheet.value = ChangeBudgetIntervalBottomSheetData(currentInterval.value)
+    }
+
+    override fun onChangeIntervalSheetDismissed() {
+        changeIntervalSheet.value = null
+    }
+
+    override fun onExcessCarryOverInputChanged(percentage: Percentage) {
+        savedStateHandle[EXCESS_CARRY_OVER_INPUT_KEY] = percentage
+    }
+
+    override fun onOverdraftCarryOverInputChanged(percentage: Percentage) {
+        savedStateHandle[OVERDRAFT_CARRY_OVER_INPUT_KEY] = percentage
+    }
+
+    override fun onCloseClicked() {
+        TODO("navigation")
+    }
+
+    override fun onSaveClicked() {
+        val limitInput = currentLimitInput.value.parseUserInputToDouble()
+        if (!uiState.value.isSaveButtonEnabled || limitInput == null) {
+            return
+        }
+
+        if (isEditMode) {
+            TODO()
+        } else {
+            viewModelScope.launch {
+                addBudget.add(
+                    BudgetInputData(
+                        name = currentNameInput.value,
+                        limit = limitInput,
+                        interval = currentInterval.value,
+                        excessCarryOver = currentExcessCarryOver.value,
+                        overdraftCarryOver = currentOverdraftCarryOver.value,
+                    )
+                )
+                TODO("navigation")
+            }
+        }
+    }
+}
