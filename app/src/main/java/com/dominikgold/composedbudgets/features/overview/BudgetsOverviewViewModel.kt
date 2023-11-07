@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.dominikgold.composedbudgets.common.DateTimeProvider
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.features.expenses.AddExpenseBottomSheetData
+import com.dominikgold.composedbudgets.features.overview.usecases.GetCurrentExpensesInBudgets
+import com.dominikgold.composedbudgets.navigation.Destination
+import com.dominikgold.composedbudgets.navigation.Navigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class BudgetsOverviewViewModel(
     getCurrentExpensesInBudgets: GetCurrentExpensesInBudgets,
+    private val navigator: Navigator,
     private val dateTimeProvider: DateTimeProvider,
 ) : ViewModel() {
 
@@ -34,6 +38,6 @@ class BudgetsOverviewViewModel(
     }
 
     fun onBudgetClicked(budgetId: BudgetId) {
-        TODO("navigation")
+        navigator.navigateTo(Destination.EditBudget(budgetId))
     }
 }

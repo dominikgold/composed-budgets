@@ -21,17 +21,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dominikgold.composedbudgets.R
 import com.dominikgold.composedbudgets.common.collectLifecycleAware
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
+import org.koin.androidx.compose.koinViewModel
 
 data class AddExpenseBottomSheetData(val budgetId: BudgetId, val budgetName: String)
 
 @Composable
 fun AddExpenseBottomSheetUi(data: AddExpenseBottomSheetData, dismissSheet: () -> Unit) {
-    val viewModel = viewModel<AddExpenseViewModel>()
+    val viewModel = koinViewModel<AddExpenseViewModel>()
     LaunchedEffect(data) {
         viewModel.setBudgetData(data.budgetId)
     }

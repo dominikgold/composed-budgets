@@ -1,8 +1,8 @@
-package com.dominikgold.composedbudgets.features.expenses
+package com.dominikgold.composedbudgets.features.expenses.usecases
 
 import com.dominikgold.composedbudgets.common.DateTimeProvider
 import com.dominikgold.composedbudgets.common.UuidGenerator
-import com.dominikgold.composedbudgets.database.ExpensesDataStore
+import com.dominikgold.composedbudgets.database.expenses.ExpensesDataStore
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.Expense
 import com.dominikgold.composedbudgets.domain.entities.ExpenseId

@@ -5,7 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.common.parseUserInputToDouble
+import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
+import com.dominikgold.composedbudgets.features.budgets.usecases.AddBudget
+import com.dominikgold.composedbudgets.features.budgets.usecases.BudgetInputData
+import com.dominikgold.composedbudgets.features.budgets.usecases.UpdateBudget
+import com.dominikgold.composedbudgets.navigation.Navigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -21,11 +26,13 @@ private const val INTERVAL_INPUT_KEY = "interval_input_key"
 
 class EditBudgetViewModel(
     private val addBudget: AddBudget,
+    private val updateBudget: UpdateBudget,
+    private val budgetId: BudgetId?,
+    private val navigator: Navigator,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel(), EditBudgetActions {
 
-    // TODO set to true when budget id is passed in via saved state handle
-    val isEditMode = false
+    val isEditMode = budgetId != null
 
     private val currentLimitInput: StateFlow<String> = savedStateHandle.getStateFlow(LIMIT_INPUT_KEY, "")
     private val currentNameInput: StateFlow<String> = savedStateHandle.getStateFlow(NAME_INPUT_KEY, "")
@@ -82,7 +89,7 @@ class EditBudgetViewModel(
     }
 
     override fun onCloseClicked() {
-        TODO("navigation")
+        navigator.goBack()
     }
 
     override fun onSaveClicked() {
@@ -91,21 +98,20 @@ class EditBudgetViewModel(
             return
         }
 
-        if (isEditMode) {
-            TODO()
-        } else {
-            viewModelScope.launch {
-                addBudget.add(
-                    BudgetInputData(
-                        name = currentNameInput.value,
-                        limit = limitInput,
-                        interval = currentInterval.value,
-                        excessCarryOver = currentExcessCarryOver.value,
-                        overdraftCarryOver = currentOverdraftCarryOver.value,
-                    )
-                )
-                TODO("navigation")
+        viewModelScope.launch {
+            val inputData = BudgetInputData(
+                name = currentNameInput.value,
+                limit = limitInput,
+                interval = currentInterval.value,
+                excessCarryOver = currentExcessCarryOver.value,
+                overdraftCarryOver = currentOverdraftCarryOver.value,
+            )
+            if (budgetId != null) {
+                updateBudget.update(budgetId, inputData)
+            } else {
+                addBudget.add(inputData)
             }
+            navigator.goBack()
         }
     }
 }

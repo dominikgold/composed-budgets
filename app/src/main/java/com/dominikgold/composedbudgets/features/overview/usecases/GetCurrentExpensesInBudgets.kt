@@ -1,8 +1,8 @@
-package com.dominikgold.composedbudgets.features.overview
+package com.dominikgold.composedbudgets.features.overview.usecases
 
 import com.dominikgold.composedbudgets.common.DateTimeProvider
-import com.dominikgold.composedbudgets.database.BudgetsDataStore
-import com.dominikgold.composedbudgets.database.ExpensesDataStore
+import com.dominikgold.composedbudgets.database.budgets.BudgetsDataStore
+import com.dominikgold.composedbudgets.database.expenses.ExpensesDataStore
 import com.dominikgold.composedbudgets.domain.entities.Budget
 import com.dominikgold.composedbudgets.domain.entities.ExpensesInBudget
 import com.dominikgold.composedbudgets.domain.entities.currentBudgetPeriod

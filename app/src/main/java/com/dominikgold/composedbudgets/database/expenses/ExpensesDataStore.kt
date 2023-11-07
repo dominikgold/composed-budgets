@@ -1,4 +1,4 @@
-package com.dominikgold.composedbudgets.database
+package com.dominikgold.composedbudgets.database.expenses
 
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.Expense

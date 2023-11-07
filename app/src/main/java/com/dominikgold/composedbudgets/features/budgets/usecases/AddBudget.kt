@@ -1,9 +1,9 @@
-package com.dominikgold.composedbudgets.features.budgets
+package com.dominikgold.composedbudgets.features.budgets.usecases
 
 import com.dominikgold.composedbudgets.common.DateTimeProvider
 import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.common.UuidGenerator
-import com.dominikgold.composedbudgets.database.BudgetsDataStore
+import com.dominikgold.composedbudgets.database.budgets.BudgetsDataStore
 import com.dominikgold.composedbudgets.domain.entities.Budget
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval

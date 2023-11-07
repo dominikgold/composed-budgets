@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.dominikgold.composedbudgets.common.UiEventsFlow
 import com.dominikgold.composedbudgets.common.parseUserInputToDouble
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
+import com.dominikgold.composedbudgets.features.expenses.usecases.AddExpense
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
@@ -25,6 +26,8 @@ class AddExpenseViewModel(
     val currentNameInput: StateFlow<String> = savedStateHandle.getStateFlow(NAME_INPUT_KEY, "")
 
     fun setBudgetData(id: BudgetId) {
+        savedStateHandle[AMOUNT_INPUT_KEY] = ""
+        savedStateHandle[NAME_INPUT_KEY] = ""
         this.budgetId = id
     }
 

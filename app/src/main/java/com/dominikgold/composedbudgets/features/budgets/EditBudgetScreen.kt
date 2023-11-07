@@ -34,17 +34,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dominikgold.composedbudgets.R
 import com.dominikgold.composedbudgets.common.Percentage
+import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 import com.dominikgold.composedbudgets.domain.entities.name
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditBudgetUi() {
-    val viewModel = viewModel<EditBudgetViewModel>()
+fun EditBudgetUi(budgetId: BudgetId?) {
+    val viewModel = koinViewModel<EditBudgetViewModel>(parameters = { parametersOf(budgetId) })
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val changeIntervalBottomSheet by viewModel.changeIntervalSheet.collectAsStateWithLifecycle()
