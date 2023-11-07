@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -83,7 +85,10 @@ fun AddExpenseBottomSheetContent(
                 style = MaterialTheme.typography.headlineMedium,
             )
             Spacer(modifier = Modifier.width(8.dp))
-            TextButton(onClick = onDoneClicked) {
+            TextButton(
+                onClick = onDoneClicked,
+                modifier = Modifier.offset(y = -(ButtonDefaults.TextButtonContentPadding.calculateTopPadding()))
+            ) {
                 Text(text = stringResource(id = R.string.add_expense_sheet_done_button))
             }
         }

@@ -2,17 +2,19 @@ package com.dominikgold.composedbudgets.features.overview
 
 import android.content.Context
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +39,7 @@ import com.dominikgold.composedbudgets.domain.entities.name
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
 import java.time.Period
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 data class BudgetsOverviewListItem(
     private val expensesInBudget: ExpensesInBudget,
@@ -65,7 +69,11 @@ data class BudgetsOverviewListItem(
             return context.resources.getQuantityString(R.plurals.days_left_on_period_format, daysLeft, daysLeft)
         }
 
-        return context.getString(R.string.budget_period_expires_today)
+        val hoursLeft = ChronoUnit.HOURS.between(currentTime, endOfPeriod).toInt()
+        if (hoursLeft > 0) {
+            return context.resources.getQuantityString(R.plurals.hours_left_on_period_format, hoursLeft, hoursLeft)
+        }
+        return context.getString(R.string.budget_period_expires_very_soon)
     }
 }
 
@@ -84,9 +92,10 @@ fun BudgetsOverviewListItemUi(item: BudgetsOverviewListItem, onAddExpenseClicked
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = item.budgetInterval(context),
+                    text = item.timeLeft(context),
                     style = MaterialTheme.typography.labelMedium,
                 )
+                Spacer(modifier = Modifier.width(12.dp))
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -95,14 +104,11 @@ fun BudgetsOverviewListItemUi(item: BudgetsOverviewListItem, onAddExpenseClicked
                     color = if (item.isOverdrafted) MaterialTheme.colorScheme.error else Color.Unspecified,
                     style = MaterialTheme.typography.headlineSmall,
                 )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = item.timeLeft(context),
-                    style = MaterialTheme.typography.labelSmall,
-                )
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = onAddExpenseClicked) {
-                    Icon(Icons.Rounded.Add, contentDescription = null)
+                FilledTonalButton(onClick = onAddExpenseClicked, contentPadding = PaddingValues(horizontal = 12.dp)) {
+                    Icon(Icons.Rounded.Add, modifier = Modifier.size(16.dp), contentDescription = null)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = stringResource(id = R.string.budget_add_expense_button))
                 }
             }
         }
