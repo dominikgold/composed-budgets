@@ -24,14 +24,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dominikgold.composedbudgets.R
 import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.domain.entities.Budget
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 import com.dominikgold.composedbudgets.domain.entities.BudgetPeriod
 import com.dominikgold.composedbudgets.domain.entities.ExpensesInBudget
+import com.dominikgold.composedbudgets.domain.entities.endTime
 import com.dominikgold.composedbudgets.domain.entities.name
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
+import java.time.Period
 import java.time.ZonedDateTime
 
 data class BudgetsOverviewListItem(
@@ -46,14 +49,30 @@ data class BudgetsOverviewListItem(
     fun budgetInterval(context: Context) = context.getString(expensesInBudget.budget.interval.name)
 
     fun timeLeft(context: Context): String {
-        return "TODO days left"
+        if (expensesInBudget.budget.interval is BudgetInterval.OneTime) {
+            return ""
+        }
+
+        val endOfPeriod = expensesInBudget.period.endTime
+        val periodLeft = Period.between(currentTime.toLocalDate(), endOfPeriod.toLocalDate())
+        val monthsLeft = periodLeft.months
+        if (monthsLeft > 0) {
+            return context.resources.getQuantityString(R.plurals.months_left_on_period_format, monthsLeft, monthsLeft)
+        }
+
+        val daysLeft = periodLeft.days
+        if (daysLeft > 0) {
+            return context.resources.getQuantityString(R.plurals.days_left_on_period_format, daysLeft, daysLeft)
+        }
+
+        return context.getString(R.string.budget_period_expires_today)
     }
 }
 
 @Composable
 fun BudgetsOverviewListItemUi(item: BudgetsOverviewListItem, onAddExpenseClicked: () -> Unit, onEditBudgetClicked: () -> Unit) {
     val context = LocalContext.current
-    Surface(shadowElevation = 4.dp, shape = RoundedCornerShape(8.dp), onClick = onEditBudgetClicked) {
+    Surface(shadowElevation = 4.dp, tonalElevation = 4.dp, shape = RoundedCornerShape(16.dp), onClick = onEditBudgetClicked) {
         Column(Modifier.padding(16.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(

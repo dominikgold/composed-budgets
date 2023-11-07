@@ -9,6 +9,7 @@ import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 import com.dominikgold.composedbudgets.features.budgets.usecases.AddBudget
 import com.dominikgold.composedbudgets.features.budgets.usecases.BudgetInputData
+import com.dominikgold.composedbudgets.features.budgets.usecases.GetBudget
 import com.dominikgold.composedbudgets.features.budgets.usecases.UpdateBudget
 import com.dominikgold.composedbudgets.navigation.Navigator
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ private const val INTERVAL_INPUT_KEY = "interval_input_key"
 class EditBudgetViewModel(
     private val addBudget: AddBudget,
     private val updateBudget: UpdateBudget,
+    private val getBudget: GetBudget,
     private val budgetId: BudgetId?,
     private val navigator: Navigator,
     private val savedStateHandle: SavedStateHandle,
@@ -56,6 +58,20 @@ class EditBudgetViewModel(
         SharingStarted.WhileSubscribed(),
         EditBudgetUiState("", "", Percentage(1f), Percentage(1f), BudgetInterval.Monthly)
     )
+
+    init {
+        if (budgetId != null) {
+            viewModelScope.launch {
+                getBudget.get(budgetId)?.let {
+                    savedStateHandle[NAME_INPUT_KEY] = it.name
+                    savedStateHandle[LIMIT_INPUT_KEY] = it.limit.toString()
+                    savedStateHandle[INTERVAL_INPUT_KEY] = it.interval
+                    savedStateHandle[EXCESS_CARRY_OVER_INPUT_KEY] = it.excessCarryOver
+                    savedStateHandle[OVERDRAFT_CARRY_OVER_INPUT_KEY] = it.overdraftCarryOver
+                }
+            }
+        }
+    }
 
     override fun onNameInputChanged(input: String) {
         savedStateHandle[NAME_INPUT_KEY] = input

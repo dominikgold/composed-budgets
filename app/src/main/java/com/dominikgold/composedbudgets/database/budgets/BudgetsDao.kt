@@ -13,7 +13,7 @@ interface BudgetsDao {
     fun getBudgets(): Flow<List<PersistedBudget>>
 
     @Query("SELECT * FROM budgets WHERE id = :id")
-    suspend fun getBudget(id: BudgetId): PersistedBudget
+    suspend fun getBudget(id: BudgetId): PersistedBudget?
 
     @Upsert
     suspend fun upsertBudget(budget: PersistedBudget)

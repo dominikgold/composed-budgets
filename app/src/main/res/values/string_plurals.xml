@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="months_left_on_period_format">
+        <item quantity="one">%d month left</item>
+        <item quantity="other">%d months left</item>
+    </plurals>
+    <plurals name="days_left_on_period_format">
+        <item quantity="one">%d day left</item>
+        <item quantity="other">%d days left</item>
+    </plurals>
+    <plurals name="hours_left_on_period_format">
+        <item quantity="one">%d hour left</item>
+        <item quantity="other">%d hours left</item>
+    </plurals>
+</resources>

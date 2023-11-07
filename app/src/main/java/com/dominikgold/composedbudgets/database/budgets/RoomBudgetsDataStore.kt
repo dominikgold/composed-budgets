@@ -13,12 +13,16 @@ internal class RoomBudgetsDataStore(private val budgetsDao: BudgetsDao) : Budget
             .map { persistedBudgets -> persistedBudgets.map { it.toEntity() } }
     }
 
+    override suspend fun getBudget(id: BudgetId): Budget? {
+        return budgetsDao.getBudget(id)?.toEntity()
+    }
+
     override suspend fun createBudget(budget: Budget) {
         budgetsDao.upsertBudget(budget.toPersistedModel())
     }
 
     override suspend fun updateBudget(budgetId: BudgetId, data: BudgetInputData) {
-        val existingBudget = budgetsDao.getBudget(budgetId)
+        val existingBudget = budgetsDao.getBudget(budgetId) ?: error("No budget found for id $budgetId")
         val newBudget = existingBudget.copy(
             name = data.name,
             limit = data.limit,

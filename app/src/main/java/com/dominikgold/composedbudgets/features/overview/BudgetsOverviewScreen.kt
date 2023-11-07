@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +29,6 @@ import com.dominikgold.composedbudgets.R
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.features.expenses.AddExpenseBottomSheetUi
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +39,6 @@ fun BudgetsOverviewUi() {
     val addExpenseBottomSheetData by viewModel.addExpenseBottomSheetData.collectAsStateWithLifecycle()
     val listItems by viewModel.listItems.collectAsStateWithLifecycle()
     val bottomSheetState = rememberModalBottomSheetState()
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         floatingActionButton = {
@@ -67,11 +64,7 @@ fun BudgetsOverviewUi() {
         ) {
             AddExpenseBottomSheetUi(
                 data = it,
-                dismissSheet = {
-                    coroutineScope.launch {
-                        bottomSheetState.hide()
-                    }
-                },
+                dismissSheet = viewModel::onAddExpenseBottomSheetDismissed,
             )
         }
     }

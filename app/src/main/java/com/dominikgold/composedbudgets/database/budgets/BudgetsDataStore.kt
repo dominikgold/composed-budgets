@@ -9,6 +9,8 @@ interface BudgetsDataStore {
 
     fun getBudgets(): Flow<List<Budget>>
 
+    suspend fun getBudget(id: BudgetId): Budget?
+
     suspend fun createBudget(budget: Budget)
 
     suspend fun updateBudget(budgetId: BudgetId, data: BudgetInputData)
