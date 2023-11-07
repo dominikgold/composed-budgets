@@ -40,4 +40,8 @@ class BudgetsOverviewViewModel(
     fun onBudgetClicked(budgetId: BudgetId) {
         navigator.navigateTo(Destination.EditBudget(budgetId))
     }
+
+    fun onAddBudgetClicked() {
+        navigator.navigateTo(Destination.EditBudget(null))
+    }
 }

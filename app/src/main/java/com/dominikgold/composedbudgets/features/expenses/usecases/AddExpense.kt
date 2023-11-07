@@ -14,6 +14,14 @@ class AddExpense(
 ) {
 
     suspend fun add(forBudget: BudgetId, amount: Double, name: String) {
-        expensesDataStore.createExpense(Expense(ExpenseId(uuidGenerator.generate()), name, dateTimeProvider.now(), forBudget, amount))
+        expensesDataStore.createExpense(
+            Expense(
+                id = ExpenseId(uuidGenerator.generate()),
+                name = name,
+                createdAt = dateTimeProvider.now(),
+                budgetId = forBudget,
+                amount = amount,
+            )
+        )
     }
 }

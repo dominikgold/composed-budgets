@@ -5,8 +5,12 @@ import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 import com.dominikgold.composedbudgets.domain.entities.ExpenseId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
-internal class TypeConverters {
+private val zonedDateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
+
+class TypeConverters {
 
     @TypeConverter
     fun fromBudgetId(budgetId: BudgetId): String = budgetId.value
@@ -25,6 +29,14 @@ internal class TypeConverters {
 
     @TypeConverter
     fun toPercentage(percentage: Float): Percentage = Percentage(percentage)
+
+    @TypeConverter
+    fun fromZonedDateTime(date: ZonedDateTime?): String? = date?.format(zonedDateTimeFormatter)
+
+    @TypeConverter
+    fun toZonedDateTime(date: String?): ZonedDateTime? = date?.let {
+        zonedDateTimeFormatter.parse(it, ZonedDateTime::from)
+    }
 
     @TypeConverter
     fun fromBudgetInterval(interval: BudgetInterval): String = when (interval) {

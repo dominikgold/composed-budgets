@@ -18,4 +18,5 @@
     <string name="edit_budget_excess_carryover_percentage_title">Excess carryover</string>
     <string name="edit_budget_overdraft_carryover_percentage_title">Overdraft carryover</string>
     <string name="percentage_value_format_string">%d\\%</string>
+    <string name="budgets_overview_add_budget_button">Budget</string>
 </resources>
