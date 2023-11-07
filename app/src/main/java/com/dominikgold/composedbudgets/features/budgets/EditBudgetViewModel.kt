@@ -9,6 +9,7 @@ import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 import com.dominikgold.composedbudgets.features.budgets.usecases.AddBudget
 import com.dominikgold.composedbudgets.features.budgets.usecases.BudgetInputData
+import com.dominikgold.composedbudgets.features.budgets.usecases.DeleteBudget
 import com.dominikgold.composedbudgets.features.budgets.usecases.GetBudget
 import com.dominikgold.composedbudgets.features.budgets.usecases.UpdateBudget
 import com.dominikgold.composedbudgets.navigation.Navigator
@@ -29,6 +30,7 @@ class EditBudgetViewModel(
     private val addBudget: AddBudget,
     private val updateBudget: UpdateBudget,
     private val getBudget: GetBudget,
+    private val deleteBudget: DeleteBudget,
     private val budgetId: BudgetId?,
     private val navigator: Navigator,
     private val savedStateHandle: SavedStateHandle,
@@ -127,6 +129,17 @@ class EditBudgetViewModel(
             } else {
                 addBudget.add(inputData)
             }
+            navigator.goBack()
+        }
+    }
+
+    override fun onDeleteBudgetClicked() {
+        if (budgetId == null) {
+            return
+        }
+
+        viewModelScope.launch {
+            deleteBudget.delete(budgetId)
             navigator.goBack()
         }
     }

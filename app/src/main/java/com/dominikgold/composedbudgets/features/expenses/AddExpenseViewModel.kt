@@ -46,7 +46,7 @@ class AddExpenseViewModel(
     }
 
     fun onAmountInputChanged(input: String) {
-        if (input.parseUserInputToDouble() != null) {
+        if (input.parseUserInputToDouble() != null || input.isEmpty()) {
             savedStateHandle[AMOUNT_INPUT_KEY] = input
         }
     }

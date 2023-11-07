@@ -11,7 +11,7 @@ import java.time.ZonedDateTime
 @Dao
 interface ExpensesDao {
 
-    @Query("SELECT * FROM expenses WHERE budgetId = :budgetId AND date(createdAt) < date(:endTime) AND date(createdAt) >= date(:startTime)")
+    @Query("SELECT * FROM expenses WHERE budgetId = :budgetId AND datetime(createdAt) < datetime(:endTime) AND datetime(createdAt) >= datetime(:startTime)")
     fun getExpensesInPeriod(
         budgetId: BudgetId,
         startTime: ZonedDateTime,
@@ -26,4 +26,7 @@ interface ExpensesDao {
 
     @Query("DELETE FROM expenses WHERE id = :expenseId")
     suspend fun deleteExpense(expenseId: ExpenseId)
+
+    @Query("DELETE FROM expenses WHERE budgetId = :forBudgetId")
+    suspend fun deleteExpenses(forBudgetId: BudgetId)
 }

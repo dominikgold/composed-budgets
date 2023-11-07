@@ -20,4 +20,5 @@
     <string name="percentage_value_format_string">%d%%</string>
     <string name="budgets_overview_add_budget_button">Budget</string>
     <string name="budget_period_expires_today">Renews today</string>
+    <string name="edit_budget_delete_button">Delete</string>
 </resources>

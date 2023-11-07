@@ -19,9 +19,11 @@ sealed interface BudgetPeriod {
 
 private const val HOURS_IN_DAY = 24L
 
+// TODO test date conversions in detail here
+
 val BudgetPeriod.startTime: ZonedDateTime
     get() = when (this) {
-        is BudgetPeriod.Day -> this.value.atStartOfDay(ZoneId.systemDefault())
+        is BudgetPeriod.Day -> this.value.atStartOfDay(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC)
         is BudgetPeriod.Month -> ZonedDateTime.of(this.year, this.month.value, 1, 0, 0, 0, 0, ZoneOffset.UTC)
         is BudgetPeriod.Year -> ZonedDateTime.of(this.year, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC)
         is BudgetPeriod.Forever -> ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC)

@@ -22,4 +22,6 @@ interface EditBudgetActions {
     fun onCloseClicked()
 
     fun onSaveClicked()
+
+    fun onDeleteBudgetClicked()
 }

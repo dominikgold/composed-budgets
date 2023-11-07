@@ -61,8 +61,8 @@ class ExpensesDaoTest {
     }
 
     @Test
-    fun Getting_current_expenses_in_budget() = runTest {
-        db.expensesDao().createExpense(PersistedExpense(ExpenseId("1"), "", 10.0, testBudget.id, ZonedDateTime.parse("2023-11-07T17:44:45.250578+01:00[Europe/Berlin]")))
+    fun Getting_current_expenses_in_monthly_budget() = runTest {
+        db.expensesDao().createExpense(PersistedExpense(ExpenseId("1"), "", 10.0, testBudget.id, testDateTime))
         db.expensesDao().createExpense(PersistedExpense(ExpenseId("2"), "", 5.0, testBudget.id, testDateTime.plusDays(1)))
         db.expensesDao().createExpense(PersistedExpense(ExpenseId("3"), "", 15.0, testBudget.id, testDateTime.minusDays(1)))
         db.expensesDao().createExpense(PersistedExpense(ExpenseId("4"), "", 10.0, BudgetId("different_budget"), testDateTime))
@@ -81,6 +81,37 @@ class ExpensesDaoTest {
             )
 
             db.expensesDao().createExpense(PersistedExpense(ExpenseId("7"), "", 20.0, testBudget.id, testDateTime.plusDays(9)))
+
+            awaitValue(1).map { it.id } shouldBeEqualTo listOf(
+                ExpenseId("1"),
+                ExpenseId("2"),
+                ExpenseId("3"),
+                ExpenseId("7"),
+            )
+        }
+    }
+
+    @Test
+    fun Getting_current_expenses_in_daily_budget() = runTest {
+        db.expensesDao().createExpense(PersistedExpense(ExpenseId("1"), "", 10.0, testBudget.id, testDateTime))
+        db.expensesDao().createExpense(PersistedExpense(ExpenseId("2"), "", 5.0, testBudget.id, testDateTime.plusHours(6)))
+        db.expensesDao().createExpense(PersistedExpense(ExpenseId("3"), "", 15.0, testBudget.id, testDateTime.minusHours(6)))
+        db.expensesDao().createExpense(PersistedExpense(ExpenseId("4"), "", 10.0, BudgetId("different_budget"), testDateTime))
+        db.expensesDao().createExpense(PersistedExpense(ExpenseId("5"), "", 200.0, testBudget.id, testDateTime.minusHours(13)))
+        db.expensesDao().createExpense(PersistedExpense(ExpenseId("6"), "", 200.0, testBudget.id, testDateTime.plusHours(13)))
+
+        db.expensesDao().getExpensesInPeriod(
+            testBudget.id,
+            startTime = testDateTime.minusHours(12),
+            endTime = testDateTime.plusHours(12)
+        ).test(this) {
+            awaitValue(0).map { it.id } shouldBeEqualTo listOf(
+                ExpenseId("1"),
+                ExpenseId("2"),
+                ExpenseId("3"),
+            )
+
+            db.expensesDao().createExpense(PersistedExpense(ExpenseId("7"), "", 20.0, testBudget.id, testDateTime.plusHours(11)))
 
             awaitValue(1).map { it.id } shouldBeEqualTo listOf(
                 ExpenseId("1"),

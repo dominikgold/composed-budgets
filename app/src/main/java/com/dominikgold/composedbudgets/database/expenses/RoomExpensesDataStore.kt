@@ -1,5 +1,6 @@
 package com.dominikgold.composedbudgets.database.expenses
 
+import android.util.Log
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.Expense
 import com.dominikgold.composedbudgets.domain.entities.ExpenseId
@@ -16,6 +17,8 @@ internal class RoomExpensesDataStore(private val expensesDao: ExpensesDao) : Exp
     ): Flow<List<Expense>> {
         return expensesDao.getExpensesInPeriod(budgetId, startTime, endTime)
             .map { persistedExpenses ->
+                val allExpenses = expensesDao.getAllExpenses()
+                Log.d("expenses", "allexpenses $allExpenses")
                 persistedExpenses.map { it.toEntity() }
             }
     }
@@ -26,5 +29,9 @@ internal class RoomExpensesDataStore(private val expensesDao: ExpensesDao) : Exp
 
     override suspend fun deleteExpense(expenseId: ExpenseId) {
         expensesDao.deleteExpense(expenseId)
+    }
+
+    override suspend fun deleteExpenses(forBudgetId: BudgetId) {
+        expensesDao.deleteExpenses(forBudgetId)
     }
 }

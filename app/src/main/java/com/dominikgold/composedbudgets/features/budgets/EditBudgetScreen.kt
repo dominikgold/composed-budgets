@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -89,9 +91,9 @@ fun EditBudgetContent(uiState: EditBudgetUiState, isEditMode: Boolean, actions: 
                 title = {
                     Text(
                         text = if (isEditMode) {
-                            stringResource(id = R.string.add_budget_title)
-                        } else {
                             stringResource(id = R.string.edit_budget_title)
+                        } else {
+                            stringResource(id = R.string.add_budget_title)
                         },
                     )
                 },
@@ -109,13 +111,13 @@ fun EditBudgetContent(uiState: EditBudgetUiState, isEditMode: Boolean, actions: 
         }
     ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
-            EditBudgetInputs(uiState, actions)
+            EditBudgetInputs(uiState, actions, isEditMode)
         }
     }
 }
 
 @Composable
-private fun EditBudgetInputs(uiState: EditBudgetUiState, actions: EditBudgetActions) {
+private fun EditBudgetInputs(uiState: EditBudgetUiState, actions: EditBudgetActions, isEditMode: Boolean) {
     Column(Modifier.padding(vertical = 24.dp, horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -164,6 +166,11 @@ private fun EditBudgetInputs(uiState: EditBudgetUiState, actions: EditBudgetActi
             onValueChanged = actions::onOverdraftCarryOverInputChanged,
             title = stringResource(id = R.string.edit_budget_overdraft_carryover_percentage_title),
         )
+        if (isEditMode) {
+            Button(onClick = actions::onDeleteBudgetClicked, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+                Text(text = stringResource(id = R.string.edit_budget_delete_button))
+            }
+        }
     }
 }
 
@@ -217,4 +224,5 @@ class EditBudgetActionsFake : EditBudgetActions {
     override fun onOverdraftCarryOverInputChanged(percentage: Percentage) {}
     override fun onCloseClicked() {}
     override fun onSaveClicked() {}
+    override fun onDeleteBudgetClicked() {}
 }

@@ -13,4 +13,6 @@ interface ExpensesDataStore {
     suspend fun createExpense(expense: Expense)
 
     suspend fun deleteExpense(expenseId: ExpenseId)
+
+    suspend fun deleteExpenses(forBudgetId: BudgetId)
 }

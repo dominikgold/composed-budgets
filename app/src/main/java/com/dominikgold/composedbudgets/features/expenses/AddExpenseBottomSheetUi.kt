@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -20,6 +21,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -91,7 +93,9 @@ fun AddExpenseBottomSheetContent(
                 modifier = Modifier.weight(.3f),
                 value = currentAmountInput,
                 onValueChange = onAmountInputChanged,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions { onDoneClicked() },
+                singleLine = true,
                 label = { Text(stringResource(R.string.add_expense_amount_input_hint)) },
             )
             Spacer(modifier = Modifier.width(16.dp))
@@ -100,6 +104,9 @@ fun AddExpenseBottomSheetContent(
                 value = currentNameInput,
                 onValueChange = onNameInputChanged,
                 label = { Text(stringResource(R.string.add_expense_name_input_hint)) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions { onDoneClicked() },
+                singleLine = true,
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
