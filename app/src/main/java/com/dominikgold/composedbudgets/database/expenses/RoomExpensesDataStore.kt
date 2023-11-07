@@ -15,7 +15,9 @@ internal class RoomExpensesDataStore(private val expensesDao: ExpensesDao) : Exp
         endTime: ZonedDateTime,
     ): Flow<List<Expense>> {
         return expensesDao.getExpensesInPeriod(budgetId, startTime, endTime)
-            .map { persistedExpenses -> persistedExpenses.map { it.toEntity() } }
+            .map { persistedExpenses ->
+                persistedExpenses.map { it.toEntity() }
+            }
     }
 
     override suspend fun createExpense(expense: Expense) {

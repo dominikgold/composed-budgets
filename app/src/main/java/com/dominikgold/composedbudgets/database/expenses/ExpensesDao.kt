@@ -18,6 +18,9 @@ interface ExpensesDao {
         endTime: ZonedDateTime,
     ): Flow<List<PersistedExpense>>
 
+    @Query("SELECT * FROM expenses")
+    suspend fun getAllExpenses(): List<PersistedExpense>
+
     @Insert
     suspend fun createExpense(expense: PersistedExpense)
 

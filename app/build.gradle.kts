@@ -73,16 +73,42 @@ dependencies {
     val roomRuntime = "androidx.room:room-runtime:$roomVersion"
     val roomKtx = "androidx.room:room-ktx:$roomVersion"
     val roomCompiler = "androidx.room:room-compiler:$roomVersion"
-
+    val roomTesting = "androidx.room:room-testing:$roomVersion"
     implementation(roomRuntime)
     implementation(roomKtx)
     ksp(roomCompiler)
+    androidTestImplementation(roomTesting)
+
 
     testImplementation("junit:junit:4.13.2")
+
+    val androidXTestVersion = "1.3.0"
+    val androidXTestCore = "androidx.test:core:$androidXTestVersion"
+    val androidXTestRules = "androidx.test:rules:$androidXTestVersion"
+    val androidXTestRunner = "androidx.test:runner:$androidXTestVersion"
+    androidTestImplementation(androidXTestCore)
+    androidTestImplementation(androidXTestRules)
+    androidTestImplementation(androidXTestRunner)
+
+    val androidArchCoreVersion = "2.1.0"
+    val androidArchCoreTesting = "androidx.arch.core:core-testing:$androidArchCoreVersion"
+    androidTestImplementation(androidArchCoreTesting)
+
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    val mockitoKotlinVersion = "2.2.0"
+    val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
+    testImplementation(mockitoKotlin)
+
+    val kluentVersion = "1.65"
+    val kluent = "org.amshove.kluent:kluent:$kluentVersion"
+    val kluentAndroid = "org.amshove.kluent:kluent-android:$kluentVersion"
+    testImplementation(kluent)
+    androidTestImplementation(kluentAndroid)
 }
