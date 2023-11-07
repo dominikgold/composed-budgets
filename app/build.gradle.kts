@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,13 +25,21 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {}
+    }
+
+    setupSigningConfig(signingConfigs = signingConfigs, buildTypes = buildTypes)
+
     buildTypes {
         release {
             isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -111,4 +122,32 @@ dependencies {
     val kluentAndroid = "org.amshove.kluent:kluent-android:$kluentVersion"
     testImplementation(kluent)
     androidTestImplementation(kluentAndroid)
+}
+
+fun setupSigningConfig(
+    signingConfigs: NamedDomainObjectContainer<com.android.build.gradle.internal.dsl.SigningConfig>,
+    buildTypes: NamedDomainObjectContainer<com.android.build.gradle.internal.dsl.BuildType>,
+) {
+    val propsCcRelease = Properties()
+    val propFileCcRelease = file("../release_signing.properties")
+    if (propFileCcRelease.canRead()) {
+        propsCcRelease.load(FileInputStream(propFileCcRelease))
+        if (propsCcRelease != null &&
+            propsCcRelease.containsKey("releaseKeyStore")
+            && propsCcRelease.containsKey("releaseStorePassword")
+            && propsCcRelease.containsKey("releaseKeyAlias")
+            && propsCcRelease.containsKey("releaseKeyPassword")
+        ) {
+            signingConfigs.getByName("release").storeFile = propsCcRelease["releaseKeyStore"]?.let { file(it) }
+            signingConfigs.getByName("release").storePassword = propsCcRelease["releaseStorePassword"] as String?
+            signingConfigs.getByName("release").keyAlias = propsCcRelease["releaseKeyAlias"] as String?
+            signingConfigs.getByName("release").keyPassword = propsCcRelease["releaseKeyPassword"] as String?
+        } else {
+            println("release_signing.properties found but some entries are missing")
+            buildTypes.getByName("release").signingConfig = null
+        }
+    } else {
+        println("release_signing.properties not found")
+        buildTypes.getByName("release").signingConfig = null
+    }
 }

@@ -35,7 +35,6 @@ import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 import com.dominikgold.composedbudgets.domain.entities.BudgetPeriod
 import com.dominikgold.composedbudgets.domain.entities.ExpensesInBudget
 import com.dominikgold.composedbudgets.domain.entities.endTime
-import com.dominikgold.composedbudgets.domain.entities.name
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
 import java.time.Period
 import java.time.ZonedDateTime
@@ -49,8 +48,6 @@ data class BudgetsOverviewListItem(
     val name = expensesInBudget.budget.name
     val amountLeft = "${expensesInBudget.totalExpensedAmount.toInt()}/${expensesInBudget.budget.limit.toInt()}"
     val isOverdrafted = expensesInBudget.amountLeft < 0
-
-    fun budgetInterval(context: Context) = context.getString(expensesInBudget.budget.interval.name)
 
     fun timeLeft(context: Context): String {
         if (expensesInBudget.budget.interval is BudgetInterval.OneTime) {

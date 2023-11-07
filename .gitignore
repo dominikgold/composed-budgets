@@ -19,6 +19,8 @@
 /captures
 .externalNativeBuild
 .cxx
+release_signing.properties
+composed_budgets_keystore.jks
 local.properties
 .java-version
 /.idea/.name
