@@ -1,6 +1,7 @@
 package com.dominikgold.composedbudgets.features.budgets
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,9 +28,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +57,13 @@ fun EditBudgetUi(budgetId: BudgetId?) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val changeIntervalBottomSheet by viewModel.changeIntervalSheet.collectAsStateWithLifecycle()
     val bottomSheetState = rememberModalBottomSheetState()
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(key1 = changeIntervalBottomSheet) {
+        if (changeIntervalBottomSheet == null) {
+            focusManager.clearFocus()
+        }
+    }
 
     EditBudgetContent(uiState, viewModel.isEditMode, viewModel)
 
@@ -123,12 +134,18 @@ private fun EditBudgetInputs(uiState: EditBudgetUiState, actions: EditBudgetActi
                 singleLine = true,
             )
             Spacer(modifier = Modifier.width(16.dp))
+            val changeIntervalInteractionSource = remember { MutableInteractionSource() }
+            val isPressed by changeIntervalInteractionSource.collectIsPressedAsState()
+            LaunchedEffect(key1 = isPressed) {
+                if (isPressed) {
+                    actions.onChangeIntervalClicked()
+                }
+            }
             OutlinedTextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(onClick = actions::onChangeIntervalClicked),
+                modifier = Modifier.weight(1f),
                 value = stringResource(uiState.currentInterval.name),
                 onValueChange = {},
+                interactionSource = changeIntervalInteractionSource,
                 label = { Text(text = stringResource(id = R.string.edit_budget_limit_hint)) },
                 trailingIcon = { Icon(Icons.Rounded.KeyboardArrowDown, contentDescription = null) },
                 readOnly = true,

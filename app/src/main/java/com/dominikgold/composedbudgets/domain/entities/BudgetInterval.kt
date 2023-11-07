@@ -1,15 +1,24 @@
 package com.dominikgold.composedbudgets.domain.entities
 
+import android.os.Parcelable
 import androidx.annotation.StringRes
 import com.dominikgold.composedbudgets.R
+import kotlinx.parcelize.Parcelize
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-sealed interface BudgetInterval {
+sealed interface BudgetInterval : Parcelable {
 
+    @Parcelize
     object Daily : BudgetInterval
+
+    @Parcelize
     object Monthly : BudgetInterval
+
+    @Parcelize
     object Annually : BudgetInterval
+
+    @Parcelize
     object OneTime : BudgetInterval
 }
 

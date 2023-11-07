@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
@@ -28,13 +29,18 @@ data class ChangeBudgetIntervalBottomSheetData(val selectedInterval: BudgetInter
 
 @Composable
 fun ChangeBudgetIntervalBottomSheetUi(data: ChangeBudgetIntervalBottomSheetData, onIntervalSelected: (BudgetInterval) -> Unit) {
-    Column(Modifier.padding(vertical = 8.dp)) {
-        val horizontalPadding = 16.dp
+    Column(
+        Modifier
+            .padding(vertical = 8.dp)
+            .navigationBarsPadding()
+    ) {
+        val horizontalPadding = 24.dp
         Text(
             modifier = Modifier.padding(horizontal = horizontalPadding),
             text = stringResource(id = R.string.change_budget_interval_sheet_title),
             style = MaterialTheme.typography.headlineMedium,
         )
+        Spacer(modifier = Modifier.height(16.dp))
         BudgetIntervalButton(
             interval = BudgetInterval.Annually,
             isSelected = data.selectedInterval == BudgetInterval.Annually,
