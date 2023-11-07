@@ -4,13 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -44,8 +45,8 @@ fun BudgetsOverviewUi() {
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = viewModel::onAddBudgetClicked) {
-                Icon(Icons.Rounded.Add, contentDescription = null)
+            ExtendedFloatingActionButton(onClick = viewModel::onAddBudgetClicked) {
+                Icon(Icons.Rounded.Add, modifier = Modifier.size(16.dp), contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = stringResource(id = R.string.budgets_overview_add_budget_button))
             }

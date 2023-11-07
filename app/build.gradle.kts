@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
     id("com.google.devtools.ksp")
 }
 
@@ -48,6 +49,10 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    ksp {
+        arg("room.generateKotlin", "true")
+    }
 }
 
 dependencies {
@@ -64,7 +69,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
 
-    val roomVersion = "2.5.2"
+    val roomVersion = "2.6.0"
     val roomRuntime = "androidx.room:room-runtime:$roomVersion"
     val roomKtx = "androidx.room:room-ktx:$roomVersion"
     val roomCompiler = "androidx.room:room-compiler:$roomVersion"

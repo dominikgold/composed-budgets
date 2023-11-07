@@ -15,10 +15,6 @@ import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
-val appModule = module {
-    includes(utilsModule, navigationModule, databaseModule, budgetsModule, budgetsOverviewModule, expensesModule)
-}
-
 private val navigationModule = module {
     single { AppNavigator() } binds arrayOf(Navigator::class, NavigationEvents::class)
 }
@@ -26,4 +22,8 @@ private val navigationModule = module {
 private val utilsModule = module {
     factory { DefaultDateTimeProvider() } bind DateTimeProvider::class
     factory { DefaultUuidGenerator() } bind UuidGenerator::class
+}
+
+val appModule = module {
+    includes(utilsModule, navigationModule, databaseModule, budgetsOverviewModule, budgetsModule, expensesModule)
 }

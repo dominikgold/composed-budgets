@@ -1,7 +1,6 @@
 package com.dominikgold.composedbudgets.database.expenses
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
@@ -22,6 +21,6 @@ interface ExpensesDao {
     @Insert
     suspend fun createExpense(expense: PersistedExpense)
 
-    @Delete
+    @Query("DELETE FROM expenses WHERE id = :expenseId")
     suspend fun deleteExpense(expenseId: ExpenseId)
 }

@@ -10,5 +10,5 @@ val budgetsModule = module {
     factory { AddBudget(get(), get(), get()) }
     factory { UpdateBudget(get()) }
 
-    viewModel { parameters -> EditBudgetViewModel(get(), get(), parameters.get(), get(), get()) }
+    viewModel { parameters -> EditBudgetViewModel(get(), get(), parameters.getOrNull(), get(), get()) }
 }

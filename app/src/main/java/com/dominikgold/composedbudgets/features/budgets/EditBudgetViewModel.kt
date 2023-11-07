@@ -62,7 +62,7 @@ class EditBudgetViewModel(
     }
 
     override fun onLimitInputChanged(input: String) {
-        if (input.parseUserInputToDouble() != null) {
+        if (input.isEmpty() || input.parseUserInputToDouble() != null) {
             savedStateHandle[LIMIT_INPUT_KEY] = input
         }
     }

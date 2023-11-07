@@ -28,9 +28,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -88,7 +90,7 @@ fun EditBudgetContent(uiState: EditBudgetUiState, isEditMode: Boolean, actions: 
                     }
                 },
                 actions = {
-                    TextButton(onClick = actions::onSaveClicked) {
+                    TextButton(onClick = actions::onSaveClicked, enabled = uiState.isSaveButtonEnabled) {
                         Text(text = stringResource(id = R.string.edit_budget_save_button))
                     }
                 }
@@ -149,16 +151,28 @@ private fun EditBudgetInputs(uiState: EditBudgetUiState, actions: EditBudgetActi
 }
 
 @Composable
-private fun PercentageSlider(modifier: Modifier, value: Percentage, onValueChanged: (Percentage) -> Unit, title: String) {
+private fun PercentageSlider(
+    modifier: Modifier,
+    value: Percentage,
+    onValueChanged: (Percentage) -> Unit,
+    title: String
+) {
     Column(modifier) {
         Text(text = title, style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
-        Row(Modifier.fillMaxWidth()) {
-            Slider(modifier = Modifier.weight(1f), value = value.value, onValueChange = { onValueChanged(Percentage(it)) }, steps = 21)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Slider(
+                modifier = Modifier.weight(1f),
+                value = value.value,
+                onValueChange = { onValueChanged(Percentage(it)) },
+                steps = 19,
+            )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
+                modifier = Modifier.width(40.dp),
                 text = stringResource(id = R.string.percentage_value_format_string, value.intValue),
                 style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.End,
             )
         }
     }
@@ -168,7 +182,11 @@ private fun PercentageSlider(modifier: Modifier, value: Percentage, onValueChang
 @Composable
 fun EditBudgetPreview() {
     ComposedBudgetsTheme {
-        EditBudgetContent(EditBudgetUiState("", "", Percentage(1f), Percentage(1f), BudgetInterval.Monthly), false, EditBudgetActionsFake())
+        EditBudgetContent(
+            EditBudgetUiState("", "", Percentage(1f), Percentage(1f), BudgetInterval.Monthly),
+            false,
+            EditBudgetActionsFake()
+        )
     }
 }
 

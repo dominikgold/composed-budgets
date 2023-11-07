@@ -1,6 +1,8 @@
 package com.dominikgold.composedbudgets.domain.entities
 
+import android.os.Parcelable
 import com.dominikgold.composedbudgets.common.Percentage
+import kotlinx.parcelize.Parcelize
 import java.time.ZonedDateTime
 
 data class Budget(
@@ -14,5 +16,6 @@ data class Budget(
 //    val color: BudgetColor,
 )
 
+@Parcelize
 @JvmInline
-value class BudgetId(val value: String)
+value class BudgetId(val value: String) : Parcelable
