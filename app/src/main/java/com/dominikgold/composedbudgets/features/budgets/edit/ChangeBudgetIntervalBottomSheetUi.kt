@@ -79,8 +79,8 @@ private fun BudgetIntervalButton(interval: BudgetInterval, isSelected: Boolean, 
         Text(
             modifier = Modifier.weight(1f),
             text = stringResource(id = interval.name),
-            color = if (isSelected) LocalContentColor.current else LocalContentColor.current.copy(alpha = .7f),
-            style = MaterialTheme.typography.labelMedium
+            color = if (isSelected) LocalContentColor.current else LocalContentColor.current.copy(alpha = .5f),
+            style = MaterialTheme.typography.titleMedium
         )
         if (isSelected) {
             Icon(Icons.Rounded.Check, contentDescription = null)
