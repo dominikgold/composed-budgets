@@ -24,4 +24,5 @@
     <string name="budget_add_expense_button">Expense</string>
     <string name="expense_deleted_message">Expense deleted.</string>
     <string name="undo_snackbar_button">Undo</string>
+    <string name="unnamed_expense_fallback">Unnamed expense</string>
 </resources>

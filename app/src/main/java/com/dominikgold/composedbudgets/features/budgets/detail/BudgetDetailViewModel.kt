@@ -36,8 +36,9 @@ class BudgetDetailViewModel(
     val uiState: StateFlow<BudgetDetailUiState> = combine(
         getBudget.observe(budgetId),
         getAllExpensesInBudget.observe(budgetId),
-    ) { budget, expenses ->
-        combineToUiState(budget, expenses)
+        expenseMarkedForDeletion,
+    ) { budget, expenses, expenseMarkedForDeletion ->
+        combineToUiState(budget, expenses.filter { it.id != expenseMarkedForDeletion })
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), BudgetDetailUiState(budgetId, "", listOf()))
 
     override fun onEditBudgetClicked() {

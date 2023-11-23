@@ -7,16 +7,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -107,7 +108,7 @@ fun BudgetDetailContent(
 ) {
     Scaffold(
         topBar = {
-            LargeTopAppBar(
+            MediumTopAppBar(
                 title = { Text(text = uiState.budgetName) },
                 navigationIcon = { CloseButton(actions::onCloseClicked) },
                 actions = {
@@ -135,13 +136,20 @@ fun BudgetDetailContent(
 
 @Composable
 private fun ExpenseList(expenseSections: List<ExpenseListSection>, onDeleteExpenseClicked: (ExpenseId) -> Unit) {
-    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
         expenseSections.forEach { section ->
             item(key = section.header) {
-                Text(text = section.header.format(LocalContext.current), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                    text = section.header.format(LocalContext.current),
+                    style = MaterialTheme.typography.titleSmall,
+                )
             }
-            items(section.items, key = { it.expense.id }) {
-                ExpenseListItemUi(item = it, onDeleteClicked = { onDeleteExpenseClicked(it.expense.id) })
+            itemsIndexed(section.items, key = { _, item -> item.expense.id }) { index, item ->
+                ExpenseListItemUi(item = item, onDeleteClicked = { onDeleteExpenseClicked(item.expense.id) })
+                if (index != section.items.lastIndex) {
+                    HorizontalDivider()
+                }
             }
         }
     }

@@ -40,7 +40,7 @@ class AddExpenseViewModel(
         }
 
         viewModelScope.launch {
-            addExpense.add(budgetId, amountInput, currentAmountInput.value)
+            addExpense.add(budgetId, amountInput, currentNameInput.value)
             dismissSheetEvents.emit(Unit)
         }
     }
