@@ -1,4 +1,4 @@
-package com.dominikgold.composedbudgets.features.expenses
+package com.dominikgold.composedbudgets.features.expenses.add
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

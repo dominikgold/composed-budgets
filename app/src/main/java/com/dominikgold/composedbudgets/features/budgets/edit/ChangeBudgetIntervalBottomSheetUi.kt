@@ -1,4 +1,4 @@
-package com.dominikgold.composedbudgets.features.budgets
+package com.dominikgold.composedbudgets.features.budgets.edit
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues

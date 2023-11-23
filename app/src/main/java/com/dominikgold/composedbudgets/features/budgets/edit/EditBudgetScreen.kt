@@ -1,4 +1,4 @@
-package com.dominikgold.composedbudgets.features.budgets
+package com.dominikgold.composedbudgets.features.budgets.edit
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -8,23 +8,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -33,20 +28,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dominikgold.composedbudgets.R
-import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 import com.dominikgold.composedbudgets.domain.entities.name
+import com.dominikgold.composedbudgets.ui.components.CloseButton
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -97,11 +90,7 @@ fun EditBudgetContent(uiState: EditBudgetUiState, isEditMode: Boolean, actions: 
                         },
                     )
                 },
-                navigationIcon = {
-                    IconButton(onClick = actions::onCloseClicked) {
-                        Icon(Icons.Rounded.Close, contentDescription = "Close")
-                    }
-                },
+                navigationIcon = { CloseButton(actions::onCloseClicked) },
                 actions = {
                     TextButton(onClick = actions::onSaveClicked, enabled = uiState.isSaveButtonEnabled) {
                         Text(text = stringResource(id = R.string.edit_budget_save_button))
@@ -154,50 +143,10 @@ private fun EditBudgetInputs(uiState: EditBudgetUiState, actions: EditBudgetActi
                 singleLine = true,
             )
         }
-        PercentageSlider(
-            modifier = Modifier.fillMaxWidth(),
-            value = uiState.currentExcessCarryOver,
-            onValueChanged = actions::onExcessCarryOverInputChanged,
-            title = stringResource(id = R.string.edit_budget_excess_carryover_percentage_title),
-        )
-        PercentageSlider(
-            modifier = Modifier.fillMaxWidth(),
-            value = uiState.currentOverdraftCarryOver,
-            onValueChanged = actions::onOverdraftCarryOverInputChanged,
-            title = stringResource(id = R.string.edit_budget_overdraft_carryover_percentage_title),
-        )
         if (isEditMode) {
             Button(onClick = actions::onDeleteBudgetClicked, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
                 Text(text = stringResource(id = R.string.edit_budget_delete_button))
             }
-        }
-    }
-}
-
-@Composable
-private fun PercentageSlider(
-    modifier: Modifier,
-    value: Percentage,
-    onValueChanged: (Percentage) -> Unit,
-    title: String
-) {
-    Column(modifier) {
-        Text(text = title, style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Slider(
-                modifier = Modifier.weight(1f),
-                value = value.value,
-                onValueChange = { onValueChanged(Percentage(it)) },
-                steps = 19,
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                modifier = Modifier.width(40.dp),
-                text = stringResource(id = R.string.percentage_value_format_string, value.intValue),
-                style = MaterialTheme.typography.labelMedium,
-                textAlign = TextAlign.End,
-            )
         }
     }
 }
@@ -207,7 +156,7 @@ private fun PercentageSlider(
 fun EditBudgetPreview() {
     ComposedBudgetsTheme {
         EditBudgetContent(
-            EditBudgetUiState("", "", Percentage(1f), Percentage(1f), BudgetInterval.Monthly),
+            EditBudgetUiState("", "", BudgetInterval.Monthly),
             false,
             EditBudgetActionsFake()
         )
@@ -220,8 +169,6 @@ class EditBudgetActionsFake : EditBudgetActions {
     override fun onIntervalChanged(interval: BudgetInterval) {}
     override fun onChangeIntervalClicked() {}
     override fun onChangeIntervalSheetDismissed() {}
-    override fun onExcessCarryOverInputChanged(percentage: Percentage) {}
-    override fun onOverdraftCarryOverInputChanged(percentage: Percentage) {}
     override fun onCloseClicked() {}
     override fun onSaveClicked() {}
     override fun onDeleteBudgetClicked() {}

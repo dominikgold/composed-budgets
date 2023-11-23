@@ -32,7 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dominikgold.composedbudgets.R
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
-import com.dominikgold.composedbudgets.features.expenses.AddExpenseBottomSheetUi
+import com.dominikgold.composedbudgets.features.expenses.add.AddExpenseBottomSheetUi
+import com.dominikgold.composedbudgets.features.expenses.add.AddExpenseHostViewModel
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -40,8 +41,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun BudgetsOverviewUi() {
     val viewModel = koinViewModel<BudgetsOverviewViewModel>()
+    val addExpenseHostViewModel = koinViewModel<AddExpenseHostViewModel>()
 
-    val addExpenseBottomSheetData by viewModel.addExpenseBottomSheetData.collectAsStateWithLifecycle()
+    val addExpenseBottomSheetData by addExpenseHostViewModel.addExpenseBottomSheetData.collectAsStateWithLifecycle()
     val listItems by viewModel.listItems.collectAsStateWithLifecycle()
     val bottomSheetState = rememberModalBottomSheetState()
     val density = LocalDensity.current
@@ -66,7 +68,7 @@ fun BudgetsOverviewUi() {
         BudgetsOverviewContent(
             items = listItems,
             onBudgetClicked = viewModel::onBudgetClicked,
-            onAddExpenseClicked = viewModel::onAddExpenseClicked,
+            onAddExpenseClicked = { addExpenseHostViewModel.onAddExpenseClicked(it.budgetId, it.name) },
             contentPadding = PaddingValues(
                 top = contentPadding.calculateTopPadding(),
                 bottom = contentPadding.calculateBottomPadding() + fabHeight
@@ -76,12 +78,12 @@ fun BudgetsOverviewUi() {
 
     addExpenseBottomSheetData?.let {
         ModalBottomSheet(
-            onDismissRequest = viewModel::onAddExpenseBottomSheetDismissed,
+            onDismissRequest = addExpenseHostViewModel::onAddExpenseBottomSheetDismissed,
             sheetState = bottomSheetState,
         ) {
             AddExpenseBottomSheetUi(
                 data = it,
-                dismissSheet = viewModel::onAddExpenseBottomSheetDismissed,
+                dismissSheet = addExpenseHostViewModel::onAddExpenseBottomSheetDismissed,
             )
         }
     }

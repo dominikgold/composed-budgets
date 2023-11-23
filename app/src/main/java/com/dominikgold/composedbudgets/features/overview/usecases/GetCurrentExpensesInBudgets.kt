@@ -20,7 +20,7 @@ class GetCurrentExpensesInBudgets(
 ) {
 
     fun get(): Flow<List<ExpensesInBudget>> {
-        return budgetsDataStore.getBudgets()
+        return budgetsDataStore.observeBudgets()
             .flatMapLatest { budgets ->
                 val expensesFlows = budgets.map { budget ->
                     budget.getCurrentExpensesFlow()
@@ -36,8 +36,7 @@ class GetCurrentExpensesInBudgets(
             startTime = budgetPeriod.startTime,
             endTime = budgetPeriod.endTime
         ).map { expenses ->
-            // TODO correctly calculate previous period carry over
-            ExpensesInBudget(this, expenses, 0.0, budgetPeriod)
+            ExpensesInBudget(this, expenses, budgetPeriod)
         }
     }
 }

@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dominikgold.composedbudgets.R
-import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.domain.entities.Budget
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
@@ -119,9 +118,8 @@ fun BudgetsOverviewListItemPreview() {
         BudgetsOverviewListItemUi(
             BudgetsOverviewListItem(
                 ExpensesInBudget(
-                    Budget(BudgetId("1"), "Budget", BudgetInterval.Monthly, 600.0, Percentage(1f), Percentage(1f), ZonedDateTime.now()),
+                    Budget(BudgetId("1"), "Budget", BudgetInterval.Monthly, 600.0, ZonedDateTime.now()),
                     listOf(),
-                    0.0,
                     BudgetPeriod.Month(ZonedDateTime.now().month, 2023),
                 ),
                 ZonedDateTime.now(),

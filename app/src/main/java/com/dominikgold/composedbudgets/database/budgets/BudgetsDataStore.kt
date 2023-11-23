@@ -7,9 +7,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface BudgetsDataStore {
 
-    fun getBudgets(): Flow<List<Budget>>
+    fun observeBudgets(): Flow<List<Budget>>
 
     suspend fun getBudget(id: BudgetId): Budget?
+
+    fun observeBudget(id: BudgetId): Flow<Budget>
 
     suspend fun createBudget(budget: Budget)
 

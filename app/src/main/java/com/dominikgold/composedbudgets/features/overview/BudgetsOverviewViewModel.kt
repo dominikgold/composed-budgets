@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dominikgold.composedbudgets.common.DateTimeProvider
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
-import com.dominikgold.composedbudgets.features.expenses.AddExpenseBottomSheetData
 import com.dominikgold.composedbudgets.features.overview.usecases.GetCurrentExpensesInBudgets
 import com.dominikgold.composedbudgets.navigation.Destination
 import com.dominikgold.composedbudgets.navigation.Navigator
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -20,8 +18,6 @@ class BudgetsOverviewViewModel(
     private val dateTimeProvider: DateTimeProvider,
 ) : ViewModel() {
 
-    val addExpenseBottomSheetData = MutableStateFlow<AddExpenseBottomSheetData?>(null)
-
     val listItems: StateFlow<List<BudgetsOverviewListItem>> = getCurrentExpensesInBudgets.get()
         .map { expensesInBudgets ->
             val currentTime = dateTimeProvider.now()
@@ -29,16 +25,8 @@ class BudgetsOverviewViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), listOf())
 
-    fun onAddExpenseClicked(listItem: BudgetsOverviewListItem) {
-        addExpenseBottomSheetData.value = AddExpenseBottomSheetData(listItem.budgetId, listItem.name)
-    }
-
-    fun onAddExpenseBottomSheetDismissed() {
-        addExpenseBottomSheetData.value = null
-    }
-
     fun onBudgetClicked(budgetId: BudgetId) {
-        navigator.navigateTo(Destination.EditBudget(budgetId))
+        navigator.navigateTo(Destination.BudgetDetail(budgetId))
     }
 
     fun onAddBudgetClicked() {

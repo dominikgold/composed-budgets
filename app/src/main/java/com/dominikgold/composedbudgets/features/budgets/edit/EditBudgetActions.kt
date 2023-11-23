@@ -1,6 +1,5 @@
-package com.dominikgold.composedbudgets.features.budgets
+package com.dominikgold.composedbudgets.features.budgets.edit
 
-import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 
 interface EditBudgetActions {
@@ -14,10 +13,6 @@ interface EditBudgetActions {
     fun onChangeIntervalClicked()
 
     fun onChangeIntervalSheetDismissed()
-
-    fun onExcessCarryOverInputChanged(percentage: Percentage)
-
-    fun onOverdraftCarryOverInputChanged(percentage: Percentage)
 
     fun onCloseClicked()
 

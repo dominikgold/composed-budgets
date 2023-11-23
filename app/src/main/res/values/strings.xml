@@ -22,4 +22,6 @@
     <string name="budget_period_expires_very_soon">Renews soon</string>
     <string name="edit_budget_delete_button">Delete</string>
     <string name="budget_add_expense_button">Expense</string>
+    <string name="expense_deleted_message">Expense deleted.</string>
+    <string name="undo_snackbar_button">Undo</string>
 </resources>

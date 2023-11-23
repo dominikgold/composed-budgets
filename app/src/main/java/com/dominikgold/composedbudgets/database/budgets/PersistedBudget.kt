@@ -2,7 +2,6 @@ package com.dominikgold.composedbudgets.database.budgets
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.domain.entities.Budget
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
@@ -15,8 +14,6 @@ data class PersistedBudget(
     val name: String,
     val interval: BudgetInterval,
     val limit: Double,
-    val excessCarryOver: Percentage,
-    val overdraftCarryOver: Percentage,
     val createdAt: ZonedDateTime,
 )
 
@@ -25,8 +22,6 @@ fun Budget.toPersistedModel() = PersistedBudget(
     name = name,
     interval = interval,
     limit = limit,
-    excessCarryOver = excessCarryOver,
-    overdraftCarryOver = overdraftCarryOver,
     createdAt = createdAt,
 )
 
@@ -35,7 +30,5 @@ fun PersistedBudget.toEntity() = Budget(
     name = name,
     interval = interval,
     limit = limit,
-    excessCarryOver = excessCarryOver,
-    overdraftCarryOver = overdraftCarryOver,
     createdAt = createdAt,
 )

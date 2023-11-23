@@ -1,4 +1,4 @@
-package com.dominikgold.composedbudgets.features.expenses
+package com.dominikgold.composedbudgets.features.expenses.add
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

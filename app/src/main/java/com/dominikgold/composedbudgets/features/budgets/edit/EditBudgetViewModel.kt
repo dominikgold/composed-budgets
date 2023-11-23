@@ -1,9 +1,8 @@
-package com.dominikgold.composedbudgets.features.budgets
+package com.dominikgold.composedbudgets.features.budgets.edit
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.common.parseUserInputToDouble
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
@@ -22,8 +21,6 @@ import kotlinx.coroutines.launch
 
 private const val LIMIT_INPUT_KEY = "limit_input_key"
 private const val NAME_INPUT_KEY = "name_input_key"
-private const val EXCESS_CARRY_OVER_INPUT_KEY = "excess_input_key"
-private const val OVERDRAFT_CARRY_OVER_INPUT_KEY = "overdraft_input_key"
 private const val INTERVAL_INPUT_KEY = "interval_input_key"
 
 class EditBudgetViewModel(
@@ -40,9 +37,6 @@ class EditBudgetViewModel(
 
     private val currentLimitInput: StateFlow<String> = savedStateHandle.getStateFlow(LIMIT_INPUT_KEY, "")
     private val currentNameInput: StateFlow<String> = savedStateHandle.getStateFlow(NAME_INPUT_KEY, "")
-    private val currentExcessCarryOver: StateFlow<Percentage> = savedStateHandle.getStateFlow(EXCESS_CARRY_OVER_INPUT_KEY, Percentage(1f))
-    private val currentOverdraftCarryOver: StateFlow<Percentage> =
-        savedStateHandle.getStateFlow(OVERDRAFT_CARRY_OVER_INPUT_KEY, Percentage(1f))
     private val currentInterval: StateFlow<BudgetInterval> = savedStateHandle.getStateFlow(INTERVAL_INPUT_KEY, BudgetInterval.Monthly)
 
     val changeIntervalSheet = MutableStateFlow<ChangeBudgetIntervalBottomSheetData?>(null)
@@ -50,15 +44,13 @@ class EditBudgetViewModel(
     val uiState = combine(
         currentLimitInput,
         currentNameInput,
-        currentExcessCarryOver,
-        currentOverdraftCarryOver,
         currentInterval,
-    ) { currentLimitInput, currentNameInput, currentExcessCarryOver, currentOverdraftCarryOver, currentInterval ->
-        EditBudgetUiState(currentLimitInput, currentNameInput, currentExcessCarryOver, currentOverdraftCarryOver, currentInterval)
+    ) { currentLimitInput, currentNameInput, currentInterval ->
+        EditBudgetUiState(currentLimitInput, currentNameInput, currentInterval)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        EditBudgetUiState("", "", Percentage(1f), Percentage(1f), BudgetInterval.Monthly)
+        EditBudgetUiState("", "", BudgetInterval.Monthly)
     )
 
     init {
@@ -68,8 +60,6 @@ class EditBudgetViewModel(
                     savedStateHandle[NAME_INPUT_KEY] = it.name
                     savedStateHandle[LIMIT_INPUT_KEY] = it.limit.toString()
                     savedStateHandle[INTERVAL_INPUT_KEY] = it.interval
-                    savedStateHandle[EXCESS_CARRY_OVER_INPUT_KEY] = it.excessCarryOver
-                    savedStateHandle[OVERDRAFT_CARRY_OVER_INPUT_KEY] = it.overdraftCarryOver
                 }
             }
         }
@@ -98,14 +88,6 @@ class EditBudgetViewModel(
         changeIntervalSheet.value = null
     }
 
-    override fun onExcessCarryOverInputChanged(percentage: Percentage) {
-        savedStateHandle[EXCESS_CARRY_OVER_INPUT_KEY] = percentage
-    }
-
-    override fun onOverdraftCarryOverInputChanged(percentage: Percentage) {
-        savedStateHandle[OVERDRAFT_CARRY_OVER_INPUT_KEY] = percentage
-    }
-
     override fun onCloseClicked() {
         navigator.goBack()
     }
@@ -121,8 +103,6 @@ class EditBudgetViewModel(
                 name = currentNameInput.value,
                 limit = limitInput,
                 interval = currentInterval.value,
-                excessCarryOver = currentExcessCarryOver.value,
-                overdraftCarryOver = currentOverdraftCarryOver.value,
             )
             if (budgetId != null) {
                 updateBudget.update(budgetId, inputData)

@@ -8,13 +8,17 @@ import kotlinx.coroutines.flow.map
 
 internal class RoomBudgetsDataStore(private val budgetsDao: BudgetsDao) : BudgetsDataStore {
 
-    override fun getBudgets(): Flow<List<Budget>> {
+    override fun observeBudgets(): Flow<List<Budget>> {
         return budgetsDao.getBudgets()
             .map { persistedBudgets -> persistedBudgets.map { it.toEntity() } }
     }
 
     override suspend fun getBudget(id: BudgetId): Budget? {
         return budgetsDao.getBudget(id)?.toEntity()
+    }
+
+    override fun observeBudget(id: BudgetId): Flow<Budget> {
+        return budgetsDao.observeBudget(id).map { it.toEntity() }
     }
 
     override suspend fun createBudget(budget: Budget) {
@@ -27,8 +31,6 @@ internal class RoomBudgetsDataStore(private val budgetsDao: BudgetsDao) : Budget
             name = data.name,
             limit = data.limit,
             interval = data.interval,
-            excessCarryOver = data.excessCarryOver,
-            overdraftCarryOver = data.overdraftCarryOver,
         )
         budgetsDao.upsertBudget(newBudget)
     }

@@ -15,6 +15,9 @@ interface BudgetsDao {
     @Query("SELECT * FROM budgets WHERE id = :id")
     suspend fun getBudget(id: BudgetId): PersistedBudget?
 
+    @Query("SELECT * FROM budgets WHERE id = :id")
+    fun observeBudget(id: BudgetId): Flow<PersistedBudget>
+
     @Upsert
     suspend fun upsertBudget(budget: PersistedBudget)
 

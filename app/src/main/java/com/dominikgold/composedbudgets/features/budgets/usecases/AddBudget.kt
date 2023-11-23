@@ -1,7 +1,6 @@
 package com.dominikgold.composedbudgets.features.budgets.usecases
 
 import com.dominikgold.composedbudgets.common.DateTimeProvider
-import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.common.UuidGenerator
 import com.dominikgold.composedbudgets.database.budgets.BudgetsDataStore
 import com.dominikgold.composedbudgets.domain.entities.Budget
@@ -21,8 +20,6 @@ class AddBudget(
             name = data.name,
             limit = data.limit,
             interval = data.interval,
-            excessCarryOver = data.excessCarryOver,
-            overdraftCarryOver = data.overdraftCarryOver,
         )
         budgetsDataStore.createBudget(budget)
     }
@@ -32,6 +29,4 @@ data class BudgetInputData(
     val name: String,
     val limit: Double,
     val interval: BudgetInterval,
-    val excessCarryOver: Percentage,
-    val overdraftCarryOver: Percentage,
 )

@@ -26,4 +26,14 @@ sealed class Destination {
             const val route = "editBudget?$budgetIdParam={budgetId}"
         }
     }
+
+    data class BudgetDetail(val budgetId: BudgetId) : Destination() {
+
+        override val destinationString = "budgetDetail/${budgetId.value}"
+
+        companion object {
+            const val budgetIdParam = "budgetId"
+            const val route = "budgetDetail/{$budgetIdParam}"
+        }
+    }
 }
