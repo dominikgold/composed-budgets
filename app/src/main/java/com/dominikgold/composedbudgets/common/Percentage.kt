@@ -8,9 +8,5 @@ import kotlin.math.roundToInt
 @JvmInline
 value class Percentage(val value: Float) : Parcelable {
 
-    init {
-        require(value in 0f..1f)
-    }
-
     val intValue get() = (value * 100).roundToInt()
 }

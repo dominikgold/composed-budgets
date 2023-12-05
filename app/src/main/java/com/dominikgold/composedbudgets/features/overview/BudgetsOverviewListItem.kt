@@ -28,12 +28,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dominikgold.composedbudgets.R
+import com.dominikgold.composedbudgets.common.Percentage
 import com.dominikgold.composedbudgets.domain.entities.Budget
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
 import com.dominikgold.composedbudgets.domain.entities.BudgetPeriod
 import com.dominikgold.composedbudgets.domain.entities.ExpensesInBudget
 import com.dominikgold.composedbudgets.domain.entities.endTime
+import com.dominikgold.composedbudgets.ui.components.HorizontalBarChart
 import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
 import java.time.Period
 import java.time.ZonedDateTime
@@ -47,6 +49,8 @@ data class BudgetsOverviewListItem(
     val name = expensesInBudget.budget.name
     val amountLeft = "${expensesInBudget.totalExpensedAmount.toInt()}/${expensesInBudget.budget.limit.toInt()}"
     val isOverdrafted = expensesInBudget.amountLeft < 0
+    val usedPercentage = Percentage((expensesInBudget.totalExpensedAmount / expensesInBudget.budget.limit).toFloat())
+    val invertedUsedPercentage = Percentage(1f / usedPercentage.value)
 
     fun timeLeft(context: Context): String {
         if (expensesInBudget.budget.interval is BudgetInterval.OneTime) {
@@ -93,6 +97,16 @@ fun BudgetsOverviewListItemUi(item: BudgetsOverviewListItem, onAddExpenseClicked
                 )
                 Spacer(modifier = Modifier.width(12.dp))
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            HorizontalBarChart(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                barFillPercentage = Percentage(1f),
+                barColor = if (item.isOverdrafted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.surface,
+                secondBarFillPercentage = if (item.isOverdrafted) item.invertedUsedPercentage else item.usedPercentage,
+                secondBarColor = if (item.isOverdrafted) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primary,
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(

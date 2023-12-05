@@ -3,11 +3,13 @@ package com.dominikgold.composedbudgets.features.budgets.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dominikgold.composedbudgets.common.DateTimeProvider
-import com.dominikgold.composedbudgets.common.toLocalDateWithZone
 import com.dominikgold.composedbudgets.domain.entities.Budget
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
+import com.dominikgold.composedbudgets.domain.entities.BudgetInterval
+import com.dominikgold.composedbudgets.domain.entities.BudgetPeriod
 import com.dominikgold.composedbudgets.domain.entities.Expense
 import com.dominikgold.composedbudgets.domain.entities.ExpenseId
+import com.dominikgold.composedbudgets.domain.entities.toCorrespondingBudgetPeriod
 import com.dominikgold.composedbudgets.features.budgets.usecases.GetAllExpensesInBudget
 import com.dominikgold.composedbudgets.features.budgets.usecases.GetBudget
 import com.dominikgold.composedbudgets.features.expenses.usecases.DeleteExpense
@@ -33,13 +35,26 @@ class BudgetDetailViewModel(
 
     val expenseMarkedForDeletion = MutableStateFlow<ExpenseId?>(null)
 
+    private val expensesFlow = getAllExpensesInBudget.observe(budgetId)
+        .combine(expenseMarkedForDeletion) { expenses, expenseMarkedForDeletion ->
+            expenses.filter { it.id != expenseMarkedForDeletion }
+        }
+    private val budgetFlow = getBudget.observe(budgetId)
+
     val uiState: StateFlow<BudgetDetailUiState> = combine(
-        getBudget.observe(budgetId),
-        getAllExpensesInBudget.observe(budgetId),
-        expenseMarkedForDeletion,
-    ) { budget, expenses, expenseMarkedForDeletion ->
-        combineToUiState(budget, expenses.filter { it.id != expenseMarkedForDeletion })
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), BudgetDetailUiState(budgetId, "", listOf()))
+        budgetFlow,
+        expensesFlow,
+    ) { budget, expenses ->
+        combineToUiState(budget, expenses)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), BudgetDetailUiState(budgetId, "", 0.0, listOf()))
+
+    val budgetHistory: StateFlow<BudgetHistoryUiModel?> = combine(budgetFlow, expensesFlow) { budget, expenses ->
+        BudgetHistoryUiModel(
+            expenses,
+            budgetLimit = budget.limit,
+            currentBudgetPeriod = dateTimeProvider.now().toCorrespondingBudgetPeriod(BudgetInterval.Monthly) as BudgetPeriod.Month,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     override fun onEditBudgetClicked() {
         navigator.navigateTo(Destination.EditBudget(budgetId))
@@ -71,18 +86,27 @@ class BudgetDetailViewModel(
         return BudgetDetailUiState(
             budgetId = budget.id,
             budgetName = budget.name,
+            budgetLimit = budget.limit,
             expenses = expenses.divideIntoSections(),
         )
     }
 
     private val currentYear = dateTimeProvider.today().year
 
-    private fun List<Expense>.divideIntoSections() = this.groupBy { expense ->
+    private fun List<Expense>.divideIntoSections() = this.sortedByDescending {
+        it.createdAt
+    }.groupBy { expense ->
         // Group expenses by the month (and year) in which they were created
-        expense.createdAt.toLocalDateWithZone().withDayOfMonth(1)
-    }.map { (date, expenses) ->
+        expense.createdAt.toCorrespondingBudgetPeriod(BudgetInterval.Monthly)
+    }.map { (budgetPeriod, expenses) ->
         ExpenseListSection(
-            header = ExpenseListSectionHeader.Month(date.month, date.year, currentYear),
+            header = if (budgetPeriod is BudgetPeriod.Month) {
+                ExpenseListSectionHeader.Month(budgetPeriod.month, budgetPeriod.year, currentYear)
+            } else {
+                // TODO this is kind of wrong, would have to be adjusted to use the correct budget period if we want to handle all kinds of
+                //  budgets correctly here
+                ExpenseListSectionHeader.All
+            },
             items = expenses.map { ExpenseListItem(it) },
         )
     }

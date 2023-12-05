@@ -1,9 +1,11 @@
 package com.dominikgold.composedbudgets.features.budgets.detail
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +18,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
@@ -30,15 +33,22 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dominikgold.composedbudgets.R
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
+import com.dominikgold.composedbudgets.domain.entities.BudgetPeriod
 import com.dominikgold.composedbudgets.domain.entities.Expense
 import com.dominikgold.composedbudgets.domain.entities.ExpenseId
 import com.dominikgold.composedbudgets.features.expenses.add.AddExpenseBottomSheetUi
@@ -50,6 +60,7 @@ import com.dominikgold.composedbudgets.ui.theme.ComposedBudgetsTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.time.LocalDate
+import java.time.Month
 import java.time.ZonedDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,8 +72,10 @@ fun BudgetDetailUi(budgetId: BudgetId) {
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val budgetHistory by viewModel.budgetHistory.collectAsStateWithLifecycle()
     BudgetDetailContent(
         uiState = uiState,
+        budgetHistory = budgetHistory,
         snackbarHostState = snackbarHostState,
         addExpenseHostActions = addExpenseHostViewModel,
         actions = viewModel,
@@ -102,10 +115,13 @@ fun BudgetDetailUi(budgetId: BudgetId) {
 @Composable
 fun BudgetDetailContent(
     uiState: BudgetDetailUiState,
+    budgetHistory: BudgetHistoryUiModel?,
     snackbarHostState: SnackbarHostState,
     addExpenseHostActions: AddExpenseHostActions,
     actions: BudgetDetailActions
 ) {
+    val density = LocalDensity.current
+    var fabHeight by remember { mutableStateOf(0.dp) }
     Scaffold(
         topBar = {
             MediumTopAppBar(
@@ -120,7 +136,14 @@ fun BudgetDetailContent(
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(onClick = { addExpenseHostActions.onAddExpenseClicked(uiState.budgetId, uiState.budgetName) }) {
+            ExtendedFloatingActionButton(
+                modifier = Modifier.onGloballyPositioned {
+                    with(density) {
+                        fabHeight = it.size.height.toDp()
+                    }
+                },
+                onClick = { addExpenseHostActions.onAddExpenseClicked(uiState.budgetId, uiState.budgetName) },
+            ) {
                 Icon(Icons.Rounded.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = stringResource(id = R.string.budget_add_expense_button))
@@ -129,20 +152,46 @@ fun BudgetDetailContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
-            ExpenseList(expenseSections = uiState.expenses, actions::onDeleteExpenseClicked)
+            ExpenseList(uiState, budgetHistory, fabHeight, actions::onDeleteExpenseClicked)
         }
     }
 }
 
 @Composable
-private fun ExpenseList(expenseSections: List<ExpenseListSection>, onDeleteExpenseClicked: (ExpenseId) -> Unit) {
-    LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
-        expenseSections.forEach { section ->
+private fun ExpenseList(
+    uiState: BudgetDetailUiState,
+    budgetHistory: BudgetHistoryUiModel?,
+    extraBottomPadding: Dp,
+    onDeleteExpenseClicked: (ExpenseId) -> Unit
+) {
+    LazyColumn(contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp + extraBottomPadding)) {
+        item {
+            Column(Modifier.padding(horizontal = 16.dp)) {
+                Text(
+                    text = stringResource(id = R.string.budget_history_chart_subtitle),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                budgetHistory?.let {
+                    BudgetHistoryChartUi(
+                        budgetHistory = it,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(240.dp),
+                    )
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+        uiState.expenses.forEach { section ->
             item(key = section.header) {
                 Text(
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
                     text = section.header.format(LocalContext.current),
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = LocalContentColor.current.copy(alpha = .7f),
                 )
             }
             itemsIndexed(section.items, key = { _, item -> item.expense.id }) { index, item ->
@@ -164,6 +213,7 @@ fun BudgetDetailPreview() {
             uiState = BudgetDetailUiState(
                 budgetId = BudgetId("budget"),
                 budgetName = "Groceries",
+                budgetLimit = 100.0,
                 expenses = listOf(
                     ExpenseListSection(
                         header = ExpenseListSectionHeader.Date(LocalDate.now()),
@@ -174,6 +224,11 @@ fun BudgetDetailPreview() {
                         )
                     )
                 )
+            ),
+            budgetHistory = BudgetHistoryUiModel(
+                listOf(),
+                budgetLimit = 500.0,
+                currentBudgetPeriod = BudgetPeriod.Month(Month.NOVEMBER, 2023),
             ),
             snackbarHostState = SnackbarHostState(),
             addExpenseHostActions = AddExpenseHostActionsFake(),

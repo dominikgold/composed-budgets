@@ -63,6 +63,13 @@ sealed interface ExpenseListSectionHeader : Parcelable {
             return month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
         }
     }
+
+    @Parcelize
+    data object All : ExpenseListSectionHeader {
+        override fun format(context: Context): String {
+            return context.getString(R.string.budget_all_expenses_header)
+        }
+    }
 }
 
 data class ExpenseListSection(
