@@ -25,3 +25,7 @@ local.properties
 .java-version
 /.idea/.name
 /.idea/androidTestResultsUserPreferences.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/migrations.xml
+/.idea/other.xml
+/.kotlin
