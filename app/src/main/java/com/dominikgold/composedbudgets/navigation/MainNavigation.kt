@@ -1,11 +1,18 @@
 package com.dominikgold.composedbudgets.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.dominikgold.composedbudgets.common.collectLifecycleAware
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
 import com.dominikgold.composedbudgets.features.budgets.detail.BudgetDetailUi
@@ -55,5 +62,17 @@ fun MainNavigation(navigationEvents: NavigationEvents) {
                 ?.let { BudgetId(it) }
             EditBudgetUi(budgetId)
         }
+
+        composable("nonsense/{testArgument}", deepLinks = listOf(navDeepLink { uriPattern = "budgets://test123?testArgument={testArgument}" })) {
+            val argument = it.arguments?.getString("testArgument") ?: "no argument"
+            TestScreen(argument)
+        }
+    }
+}
+
+@Composable
+fun TestScreen(argument: String) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = "Hello, $argument!", style = MaterialTheme.typography.headlineLarge)
     }
 }

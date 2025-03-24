@@ -1,5 +1,8 @@
 package com.dominikgold.composedbudgets.features.overview
 
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -25,10 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dominikgold.composedbudgets.R
 import com.dominikgold.composedbudgets.domain.entities.BudgetId
@@ -42,6 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 fun BudgetsOverviewUi() {
     val viewModel = koinViewModel<BudgetsOverviewViewModel>()
     val addExpenseHostViewModel = koinViewModel<AddExpenseHostViewModel>()
+    val context = LocalContext.current
 
     val addExpenseBottomSheetData by addExpenseHostViewModel.addExpenseBottomSheetData.collectAsStateWithLifecycle()
     val listItems by viewModel.listItems.collectAsStateWithLifecycle()
@@ -57,7 +63,17 @@ fun BudgetsOverviewUi() {
                         fabHeight = it.size.height.toDp()
                     }
                 },
-                onClick = viewModel::onAddBudgetClicked
+                onClick = {
+                    val deepLinkIntent = Intent(Intent.ACTION_VIEW, "budgets://test123?testArgument=TestArgument".toUri()).apply {
+                        putExtra("test_argument", "Other argument")
+                        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    val pendingIntent = TaskStackBuilder.create(context).run {
+                        addNextIntentWithParentStack(deepLinkIntent)
+                        getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+                    }
+                    pendingIntent.send()
+                }
             ) {
                 Icon(Icons.Rounded.Add, modifier = Modifier.size(16.dp), contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
