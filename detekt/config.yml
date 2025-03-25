@@ -1,0 +1,111 @@
+formatting:
+
+  Indentation:
+    active: false
+
+  CommentSpacing:
+    active: false
+
+  # We use the 'first-class' detekt rule under 'style' namespace so we can ignore warnings individually with @Suppress
+  MaximumLineLength:
+    active: false
+
+comments:
+
+  # For marking outdated KDoc above functions or constructors
+  OutdatedDocumentation:
+    active: true
+    matchDeclarationsOrder: false
+
+complexity:
+
+  LongParameterList:
+    active: true
+    functionThreshold: 6
+    constructorThreshold: 9
+  StringLiteralDuplication:
+    active: true
+    threshold: 2
+    ignoreStringsRegex: '(Not yet implemented)'
+  TooManyFunctions:
+    thresholdInFiles: 25
+    thresholdInObjects: 20
+    thresholdInInterfaces: 20
+    thresholdInClasses: 25
+    thresholdInEnums: 5
+  NestedBlockDepth:
+    threshold: 6
+
+coroutines:
+
+  # For marking usages of GlobalScope
+  GlobalCoroutineUsage:
+    active: true
+  # For marking 'suspend' functions that do not need the 'suspend' keyword
+  RedundantSuspendModifier:
+    active: true
+
+performance:
+
+  SpreadOperator:
+    active: false
+
+exceptions:
+
+  TooGenericExceptionCaught:
+    active: false
+
+potential-bugs:
+
+  # For marking wrong safe casts (using e.g. as String? instead of as? String)
+  CastToNullableType:
+    active: true
+  # For marking casts of immutable to mutable lists
+  DontDowncastCollectionTypes:
+    active: true
+  # For marking usages of e.g. var list = mutableListOf(). val should be used instead.
+  DoubleMutabilityForCollection:
+    active: true
+  # For marking when no explicit type is specified in declarations that use platform types with undefined nullability
+  HasPlatformType:
+    active: true
+  # For marking when functions explicitly specify Unit as the return type
+  ImplicitUnitReturnType:
+    active: true
+    allowExplicitReturnType: false
+  NullableToStringCall:
+    active: true
+
+naming:
+
+  FunctionNaming:
+    active: true
+    functionPattern: '[a-zA-Z0-9]*'
+
+style:
+
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
+  MultilineLambdaItParameter:
+    active: true
+  RedundantHigherOrderMapUsage:
+    active: true
+  ReturnCount:
+    active: true
+    max: 3
+    excludeGuardClauses: true
+  UnnecessaryLet:
+    active: true
+  UntilInsteadOfRangeTo:
+    active: true
+  UseIsNullOrEmpty:
+    active: true
+  UseRequire:
+    active: true
+  MagicNumber:
+    active: true
+    ignoreLocalVariableDeclaration: true
+    ignoreEnums: true
+  UnusedPrivateMember:
+    allowedNames: '^(Preview.*|.*Preview)'

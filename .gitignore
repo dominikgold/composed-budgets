@@ -15,7 +15,7 @@
 /.idea/runConfigurations.xml
 /.idea/deploymentTargetDropDown.xml
 .DS_Store
-/build
+build
 /captures
 .externalNativeBuild
 .cxx
