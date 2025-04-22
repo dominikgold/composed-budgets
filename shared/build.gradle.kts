@@ -16,7 +16,7 @@ kotlin {
             }
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -30,13 +30,17 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
+            api(libs.koin.android)
             implementation(libs.timber)
             implementation(libs.sqldelight.android.driver)
         }
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.sqldelight.runtime)
-            implementation(libs.kotlin.datetime)
+            api(libs.okio)
+            api(libs.kotlin.datetime)
+            api(libs.kotlin.serialization)
+            api(libs.koin.core)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
@@ -57,13 +61,13 @@ kotlin {
 
 android {
     namespace = "com.dominikgold.composedbudgets"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
-        minSdk = 30
+        minSdk = 32
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

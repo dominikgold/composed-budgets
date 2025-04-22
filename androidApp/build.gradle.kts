@@ -6,10 +6,10 @@ plugins {
 
 android {
     namespace = "com.dominikgold.composedbudgets.android"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.dominikgold.composedbudgets.android"
-        minSdk = 30
+        minSdk = 32
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -48,5 +48,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.material.icons.extended)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.navigation.compose)
+    implementation(libs.koin.compose)
     debugImplementation(libs.compose.ui.tooling)
 }
