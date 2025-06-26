@@ -29,7 +29,7 @@ import com.dominikgold.composedbudgets.android.utils.di.scopedKoinViewModel
 import com.dominikgold.composedbudgets.entities.BudgetBreakdown
 import com.dominikgold.composedbudgets.entities.Currency
 import com.dominikgold.composedbudgets.entities.Expense
-import com.dominikgold.composedbudgets.entities.ExpenseCategory
+import com.dominikgold.composedbudgets.entities.MerchantCategory
 import com.dominikgold.composedbudgets.entities.MonetaryValue
 import com.dominikgold.composedbudgets.entities.MonthAndYear
 import com.dominikgold.composedbudgets.features.home.ExpensesInMonthSummary
@@ -118,7 +118,7 @@ private fun HomeScreenPreview() {
     ComposedBudgetsTheme {
         HomeScreenContent(
             BudgetBreakdown(
-                listOf(ExpenseCategory.preview),
+                listOf(MerchantCategory.preview),
                 expenses = listOf(Expense.preview)
             ),
             listOf(

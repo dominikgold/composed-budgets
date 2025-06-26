@@ -14,7 +14,7 @@ data class Expense(
     companion object {
         val preview = Expense(
             "1",
-            Merchant("1", "Merch123Groc", "Grocery Store", ExpenseCategory.preview),
+            Merchant("1", "Merch123Groc", "Grocery Store", MerchantCategory.preview),
             amount = MonetaryValue(2000, Currency.Euro),
             date = Clock.System.now(),
             recurringPeriod = null,

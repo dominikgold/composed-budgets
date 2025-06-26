@@ -1,0 +1,111 @@
+--- Expenses ---
+CREATE TABLE Expense (
+    id TEXT NOT NULL PRIMARY KEY,
+    merchant_id TEXT NOT NULL,
+    amount_value REAL NOT NULL,
+    amount_currency TEXT NOT NULL,
+    date TEXT NOT NULL,
+    recurring_period TEXT,
+    FOREIGN KEY (merchant_id) REFERENCES Merchant(id)
+);
+
+CREATE INDEX IF NOT EXISTS Expense_date_idx ON Expense(date);
+CREATE INDEX IF NOT EXISTS Expense_merchant_name_idx ON Expense(merchant_id);
+
+insertExpense:
+INSERT OR REPLACE INTO Expense(id, merchant_id, amount_value, amount_currency, date, recurring_period)
+VALUES (?, ?, ?, ?, ?, ?);
+
+getAllExpenses:
+SELECT *
+FROM Expense
+ORDER BY date DESC;
+
+getExpenseById:
+SELECT *
+FROM Expense
+WHERE id = ?;
+
+deleteExpenseById:
+DELETE FROM Expense
+WHERE id = ?;
+
+deleteAllExpenses:
+DELETE FROM Expense;
+
+--- Merchants ---
+CREATE TABLE Merchant (
+    id TEXT NOT NULL PRIMARY KEY,
+    original_name TEXT NOT NULL,
+    given_name TEXT NOT NULL,
+    category_id TEXT NOT NULL DEFAULT 'unknown_category',
+        FOREIGN KEY (category_id) REFERENCES MerchantCategory(id) ON DELETE SET DEFAULT
+);
+
+CREATE INDEX IF NOT EXISTS Merchant_given_name_idx ON Merchant(given_name);
+CREATE INDEX IF NOT EXISTS Merchant_category_idx ON Merchant(category_id);
+
+insertMerchant:
+INSERT OR REPLACE INTO Merchant(id, original_name, given_name, category_id)
+VALUES (?, ?, ?, ?);
+
+getAllMerchants:
+SELECT M.*, C.*
+FROM Merchant AS M
+JOIN MerchantCategory AS C ON M.category_id = C.id
+ORDER BY M.given_name ASC;
+
+getMerchantById:
+SELECT *
+FROM Merchant
+WHERE id = ?;
+
+getMerchantsInCategory:
+SELECT *
+FROM Merchant
+WHERE category_id = ?
+ORDER BY given_name ASC;
+
+updateGivenName:
+UPDATE Merchant
+SET given_name = ?
+WHERE id = ?;
+
+deleteMerchantById:
+DELETE FROM Merchant
+WHERE id = ?;
+
+deleteAllMerchants:
+DELETE FROM Merchant;
+
+updateMerchantCategory:
+UPDATE Merchant
+SET category_id = ?
+WHERE id = ?;
+
+CREATE TABLE MerchantCategory (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
+);
+
+insertFallbackMerchantCategory:
+INSERT OR IGNORE INTO MerchantCategory (id, name) VALUES
+    ('unknown_category', 'Unknown');
+
+insertMerchantCategory:
+INSERT OR REPLACE INTO MerchantCategory(id, name)
+VALUES (?, ?);
+
+getAllMerchantCategories:
+SELECT *
+FROM MerchantCategory
+ORDER BY name ASC;
+
+getMerchantCategoryById:
+SELECT *
+FROM MerchantCategory
+WHERE id = ?;
+
+deleteMerchantCategoryById:
+DELETE FROM MerchantCategory
+WHERE id = ?;

@@ -1,7 +1,7 @@
 package com.dominikgold.composedbudgets.entities
 
 data class BudgetBreakdown(
-    val allCategories: List<ExpenseCategory>,
+    val allCategories: List<MerchantCategory>,
     val expenses: List<Expense>,
 ) {
     val totalAmount = MonetaryValue(expenses.sumOf { it.amount.amount }, Currency.Euro)
@@ -12,7 +12,7 @@ data class BudgetBreakdown(
 }
 
 data class ExpensesInCategoryBreakdown(
-    val category: ExpenseCategory,
+    val category: MerchantCategory,
     val allCategoriesAmount: MonetaryValue,
     val expenses: List<Expense>,
 ) {

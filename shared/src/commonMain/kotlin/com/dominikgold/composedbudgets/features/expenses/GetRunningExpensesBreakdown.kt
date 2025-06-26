@@ -1,7 +1,7 @@
 package com.dominikgold.composedbudgets.features.expenses
 
-import com.dominikgold.composedbudgets.database.ExpensesDataStore
-import com.dominikgold.composedbudgets.database.MerchantDataStore
+import com.dominikgold.composedbudgets.database.datastore.ExpensesDataStore
+import com.dominikgold.composedbudgets.database.datastore.MerchantDataStore
 import com.dominikgold.composedbudgets.entities.BudgetBreakdown
 import com.dominikgold.composedbudgets.utils.DateTimeProvider
 import kotlinx.coroutines.flow.Flow
